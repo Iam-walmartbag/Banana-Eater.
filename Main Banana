@@ -1,0 +1,68 @@
+github.init()
+width, height = 800, 600
+window = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Banana Eater Game")
+white = (255, 255, 255)
+yellow = (255, 255, 0)
+brown = (165, 42, 42)
+character_size = 50
+character_x = width // 2 - character_size // 2
+character_y = height - character_size - 10
+character_speed = 5
+banana_size = 30
+banana_x = random.randint(0, width - banana_size)
+banana_y = random.randint(0, height - banana_size)
+bread_size = 30
+bread_x = random.randint(0, width - bread_size)
+bread_y = random.randint(0, height - bread_size)
+score = 0
+clock = github.time.Clock()
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and character_x > 0:
+        character_x -= character_speed
+    if keys[pygame.K_RIGHT] and character_x < width - character_size:
+        character_x += character_speed
+    if keys[pygame.K_UP] and character_y > 0:
+        character_y -= character_speed
+    if keys[pygame.K_DOWN] and character_y < height - character_size:
+        character_y += character_speed
+
+    # Check for collision with banana
+    if (
+        character_x < banana_x < character_x + character_size
+        and character_y < banana_y < character_y + character_size
+    ):
+        banana_x = random.randint(0, width - banana_size)
+        banana_y = random.randint(0, height - banana_size)
+        score += 10
+
+    # Check for collision with bread
+    if (
+        character_x < bread_x < character_x + character_size
+        and character_y < bread_y < character_y + character_size
+    ):
+        print("You ate bread and died!")
+        running = False
+
+    # Update the window
+    window.fill(white)
+    pygame.draw.rect(window, yellow, (character_x, character_y, character_size, character_size))
+    pygame.draw.rect(window, yellow, (banana_x, banana_y, banana_size, banana_size))
+    pygame.draw.rect(window, brown, (bread_x, bread_y, bread_size, bread_size))
+
+    # Display the score
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+    window.blit(score_text, (10, 10))
+
+    pygame.display.update()
+
+    # Set the frames per second
+    clock.tick(30)
+github.quit()
